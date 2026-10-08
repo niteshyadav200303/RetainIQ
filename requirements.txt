@@ -1,0 +1,20 @@
+# Core data science and ML
+numpy==2.4.2
+pandas==2.3.3
+scipy==1.17.1
+scikit-learn==1.8.0
+xgboost==3.4.1
+lifelines==0.30.3
+shap==0.52.0
+
+# Visualization
+matplotlib==3.10.8
+seaborn==0.13.2
+plotly==7.1.0
+
+# Excel and utilities
+openpyxl==3.1.5
+joblib==1.5.3
+
+# Web Application
+streamlit==1.62.0
