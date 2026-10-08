@@ -7,22 +7,29 @@ html, body, [class*="css"] {
     background-color: #F6F9FC;
 }
 
-/* Hide Streamlit menu, deploy button, and footer, but keep sidebar collapse/expand button accessible */
+/* Hide hamburger menu and deploy button only — NOT the toolbar container */
 #MainMenu {visibility: hidden !important;}
 footer {visibility: hidden !important;}
 .stDeployButton {display: none !important;}
-div[data-testid="stToolbar"] {display: none !important;}
+button[data-testid="stMainMenuButton"] {display: none !important;}
+button[data-testid="stBaseButton-header"] {display: none !important;}  /* Deploy */
 
-/* Ensure sidebar toggle arrow button is always visible and beautifully styled */
-button[data-testid="stSidebarCollapsedControl"],
-button[data-testid="baseButton-headerNoPadding"],
-div[data-testid="stSidebarCollapseButton"] {
-    display: block !important;
+/* Keep the toolbar container visible so the sidebar expand button works */
+div[data-testid="stToolbar"] {
+    display: flex !important;
     visibility: visible !important;
-    z-index: 999999 !important;
+}
+
+/* Sidebar expand button — always visible, styled with brand color */
+button[data-testid="stExpandSidebarButton"],
+button[data-testid="stSidebarCollapsedControl"],
+button[data-testid="stBaseButton-headerNoPadding"] {
+    display: flex !important;
+    visibility: visible !important;
     color: #635BFF !important;
 }
 
+/* Transparent header background */
 header[data-testid="stHeader"] {
     background: transparent !important;
 }
