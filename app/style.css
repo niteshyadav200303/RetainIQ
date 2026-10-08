@@ -7,12 +7,25 @@ html, body, [class*="css"] {
     background-color: #F6F9FC;
 }
 
-/* Hide Streamlit default chrome */
+/* Hide Streamlit menu, deploy button, and footer, but keep sidebar collapse/expand button accessible */
 #MainMenu {visibility: hidden !important;}
 footer {visibility: hidden !important;}
-header {visibility: hidden !important;}
 .stDeployButton {display: none !important;}
 div[data-testid="stToolbar"] {display: none !important;}
+
+/* Ensure sidebar toggle arrow button is always visible and beautifully styled */
+button[data-testid="stSidebarCollapsedControl"],
+button[data-testid="baseButton-headerNoPadding"],
+div[data-testid="stSidebarCollapseButton"] {
+    display: block !important;
+    visibility: visible !important;
+    z-index: 999999 !important;
+    color: #635BFF !important;
+}
+
+header[data-testid="stHeader"] {
+    background: transparent !important;
+}
 
 /* Container layout styling */
 .main .block-container {
