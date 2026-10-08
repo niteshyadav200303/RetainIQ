@@ -1,0 +1,165 @@
+/* RetainIQ Custom SaaS Design System (Stripe / Mixpanel Theme) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+html, body, [class*="css"] {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    color: #0A2540;
+    background-color: #F6F9FC;
+}
+
+/* Hide Streamlit default chrome */
+#MainMenu {visibility: hidden !important;}
+footer {visibility: hidden !important;}
+header {visibility: hidden !important;}
+.stDeployButton {display: none !important;}
+div[data-testid="stToolbar"] {display: none !important;}
+
+/* Container layout styling */
+.main .block-container {
+    padding-top: 1.5rem !important;
+    padding-bottom: 3.5rem !important;
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
+    max-width: 1400px;
+}
+
+/* Custom Card Container */
+.retain-card {
+    background: #FFFFFF;
+    border: 1px solid #E3E8EE;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(10, 37, 64, 0.06);
+    padding: 22px 24px;
+    margin-bottom: 20px;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.retain-card:hover {
+    box-shadow: 0 6px 14px rgba(10, 37, 64, 0.08);
+}
+
+.card-header-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #0A2540;
+    margin-bottom: 14px;
+    letter-spacing: -0.01em;
+}
+
+/* KPI Card */
+.kpi-container {
+    background: #FFFFFF;
+    border: 1px solid #E3E8EE;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(10, 37, 64, 0.06);
+    padding: 20px 22px;
+    margin-bottom: 16px;
+}
+
+.kpi-title {
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #6B7C93;
+    margin-bottom: 6px;
+}
+
+.kpi-value {
+    font-size: 1.85rem;
+    font-weight: 700;
+    color: #0A2540;
+    line-height: 1.2;
+    margin-bottom: 4px;
+}
+
+.kpi-subtitle {
+    font-size: 0.85rem;
+    color: #6B7C93;
+}
+
+/* Risk Badges */
+.risk-pill {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 9999px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-align: center;
+}
+
+.risk-low {
+    background-color: #E6F8F0;
+    color: #1FA971;
+    border: 1px solid #B8E8D2;
+}
+
+.risk-medium {
+    background-color: #FEF7EA;
+    color: #F5A623;
+    border: 1px solid #FCDFB5;
+}
+
+.risk-high {
+    background-color: #FEECEB;
+    color: #E5484D;
+    border: 1px solid #F9C3C1;
+}
+
+/* App Header Banner */
+.app-header {
+    margin-bottom: 24px;
+}
+
+.app-title {
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: #0A2540;
+    letter-spacing: -0.02em;
+    margin: 0;
+}
+
+.app-subtitle {
+    font-size: 0.95rem;
+    color: #6B7C93;
+    margin-top: 4px;
+}
+
+/* Custom Footer */
+.custom-footer {
+    border-top: 1px solid #E3E8EE;
+    padding-top: 18px;
+    margin-top: 40px;
+    text-align: center;
+    color: #6B7C93;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+/* Primary Button Styling */
+div.stButton > button:first-child {
+    background-color: #635BFF !important;
+    color: #FFFFFF !important;
+    font-weight: 600 !important;
+    border-radius: 8px !important;
+    border: none !important;
+    padding: 0.55rem 1.25rem !important;
+    box-shadow: 0 2px 5px rgba(99, 91, 255, 0.25) !important;
+    transition: all 0.2s ease !important;
+}
+
+div.stButton > button:first-child:hover {
+    background-color: #5348E8 !important;
+    box-shadow: 0 4px 10px rgba(99, 91, 255, 0.35) !important;
+}
+
+/* Sidebar Custom Styling */
+section[data-testid="stSidebar"] {
+    background-color: #FFFFFF !important;
+    border-right: 1px solid #E3E8EE !important;
+}
+
+section[data-testid="stSidebar"] .block-container {
+    padding-top: 2rem !important;
+}

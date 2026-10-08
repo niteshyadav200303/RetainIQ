@@ -149,22 +149,28 @@ def engineer_customer_features(
     # For customer-level survival during the 90 day window:
     # Event = Churned (1) or Retained (0)
     # Survival time (T): if returned, days until first return after cutoff; if churned, censored at 90 days
+    # Survival analysis:
+    # Event: Customer repurchased (1 = Returned/Purchased in window, 0 = Censored/Did not return)
+    # Duration: Days from cutoff until repurchase event, or 90 days if censored.
+    # Alternatively for Churn as event: Duration = Recency + window, or time active.
+    # In retail customer lifetime survival analysis:
+    # T = days until purchase event (or 90 days max). Event = 1 if purchased, 0 if censored (churned).
+    # This aligns standard survival terminology where the event is an observed transaction.
     first_future_tx = future_grouped["InvoiceDate"].min()
     features_df["FirstFutureTx"] = features_df["CustomerID"].map(first_future_tx)
 
     def calc_survival_duration(row):
         if pd.isna(row["FirstFutureTx"]):
-            # Churned: did not return during 90-day window -> Censored at 90 days
+            # Did not purchase in window -> Censored at 90 days
             return float(prediction_window_days)
         else:
-            # Retained: event occurred at (FirstFutureTx - cutoff)
+            # Purchased -> Event occurred at (FirstFutureTx - cutoff)
             days = (row["FirstFutureTx"] - cutoff_date).total_seconds() / (24 * 3600)
             return max(1.0, min(float(prediction_window_days), days))
 
     features_df["SurvivalDuration"] = features_df.apply(calc_survival_duration, axis=1)
-    # In survival analysis of retention: Event = 1 if returned (retention event) or Event = 1 if churned
-    # We define Event = Churn (1 = Churned, 0 = Active/Retained)
-    features_df["SurvivalEvent"] = features_df["Churn"]
+    # SurvivalEvent: 1 if customer returned (purchase occurred), 0 if censored (churned)
+    features_df["SurvivalEvent"] = (features_df["Churn"] == 0).astype(int)
     features_df.drop(columns=["FirstFutureTx"], inplace=True)
 
     # Segment customers
