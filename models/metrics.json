@@ -1,0 +1,61 @@
+{
+  "churn_classification": {
+    "logistic_regression": {
+      "accuracy": 0.7113,
+      "precision": 0.7771,
+      "recall": 0.6955,
+      "f1_score": 0.734,
+      "roc_auc": 0.7796,
+      "confusion_matrix": [
+        [
+          411,
+          150
+        ],
+        [
+          229,
+          523
+        ]
+      ]
+    },
+    "xgboost": {
+      "accuracy": 0.722,
+      "precision": 0.7604,
+      "recall": 0.7513,
+      "f1_score": 0.7559,
+      "roc_auc": 0.7854,
+      "confusion_matrix": [
+        [
+          383,
+          178
+        ],
+        [
+          187,
+          565
+        ]
+      ]
+    }
+  },
+  "ltv_regression": {
+    "xgboost_regressor": {
+      "mae": 483.41,
+      "rmse": 3328.74,
+      "r2_score": 0.2758,
+      "mean_actual_ltv": 623.98,
+      "mean_pred_ltv": 190.06
+    }
+  },
+  "survival_analysis": {
+    "cox_proportional_hazards": {
+      "concordance_index": 0.3226,
+      "summary_coefficients": {
+        "Recency": 0.0026,
+        "Frequency": -0.1674,
+        "Monetary": -0.0002,
+        "Tenure": -0.0056,
+        "AvgOrderValue": -0.0011,
+        "UniqueProducts": -0.0494,
+        "IsUK": -3.2424
+      }
+    }
+  }
+}

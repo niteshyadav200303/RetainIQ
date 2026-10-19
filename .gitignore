@@ -10,12 +10,8 @@ __pycache__/
 # Data
 data/raw/*
 !data/raw/.gitkeep
-data/processed/*.parquet
 data/processed/*.csv
-
-# Models
-models/*.joblib
-models/*.json
+data/processed/cleaned_transactions.*
 
 # Streamlit
 .streamlit/secrets.toml
