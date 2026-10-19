@@ -1,209 +1,238 @@
-# RetainIQ — E-Commerce Customer Churn & Lifetime Value (LTV) Predictor
+# RetainIQ — Customer Churn & Lifetime Value Intelligence
 
-**Final Year Individual Mini Project (AI & DS II)**  
-**Author:** Nitesh  
-**Academic Seed:** 42 | **Python Target:** 3.10+
+<p align="center">
+  <strong>Predict customer churn. Understand customer value. Make smarter retention decisions.</strong>
+</p>
 
----
+<p align="center">
+  <a href="https://retainiq-jul8liic22pxmy8gemp8j8.streamlit.app/">
+    <img src="https://img.shields.io/badge/🚀_LIVE_DEMO-Launch_RetainIQ-635BFF?style=for-the-badge" alt="Launch RetainIQ Live Demo">
+  </a>
+  <a href="https://github.com/niteshyadav200303/RetainIQ">
+    <img src="https://img.shields.io/badge/GitHub-Source_Code-181717?style=for-the-badge&logo=github" alt="GitHub Repository">
+  </a>
+</p>
 
-## 1. Project Overview & Problem Statement
-
-In non-contractual e-commerce platforms, customer churn does not occur through explicit subscription cancellations. Customers simply drift away quietly. Traditional machine learning workflows often suffer from **catastrophic target leakage** by evaluating aggregate metrics computed over entire transaction histories rather than establishing strict temporal boundaries.
-
-**RetainIQ** addresses this with an end-to-end predictive intelligence system:
-1. **Strict Leakage-Free Temporal Cutoff:** Features are engineered strictly prior to a cutoff timestamp (`2011-09-01`).
-2. **Standardized Churn & LTV Ground Truth:** Customer ground truth is measured exclusively within the subsequent 90-day forward observation window (`2011-09-01` to `2011-11-30`).
-3. **Multi-Horizon ML Architecture:**
-   - **Churn Classification:** Cost-sensitive XGBoost vs. Logistic Regression baseline.
-   - **Survival Analysis:** Lifelines Kaplan-Meier trajectories and Cox Proportional Hazards for time-to-inactivity.
-   - **Forward LTV Regression:** Log-transformed XGBoost Regressor for forward monetary spend estimation.
-4. **Explainable AI (XAI):** Real-time local and global SHAP (SHapley Additive exPlanations) attribution.
-5. **Modern SaaS Executive UI:** Clean Stripe/Mixpanel-inspired Streamlit dashboard with full batch scoring and simulation capabilities.
-
----
-
-## 2. Dataset & Cleaning Pipeline
-
-- **Source:** UCI Online Retail II Repository (`Year 2009-2010` and `Year 2010-2011` sheets; 1,067,371 raw records).
-- **Cleaning Protocol:**
-  - **Null CustomerIDs:** Removed 243,007 anonymous guest checkouts (cannot track repeat behavior).
-  - **Cancellations:** Filtered 18,744 transactions starting with `'C'` to eliminate skewed negative values.
-  - **Bad Quantity & Unit Price:** Filtered 71 records with non-positive values.
-  - **Duplicates:** Dropped 26,124 duplicate entries.
-  - **Clean Output:** 779,425 verified transactions across 5,878 distinct customers.
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python">
+  <img src="https://img.shields.io/badge/Streamlit-Dashboard-FF4B4B?style=flat-square&logo=streamlit&logoColor=white" alt="Streamlit">
+  <img src="https://img.shields.io/badge/Machine_Learning-XGBoost-1F6FEB?style=flat-square" alt="Machine Learning">
+  <img src="https://img.shields.io/badge/Explainable_AI-SHAP-8A2BE2?style=flat-square" alt="Explainable AI">
+  <img src="https://img.shields.io/badge/Status-Deployed-16A34A?style=flat-square" alt="Deployed">
+</p>
 
 ---
 
-## 3. Churn Definition & Leakage-Free Time-Split
+## Overview
 
-```
-|<---------------- Historical Feature Window --------------->| |<--- 90-Day Observation Window --->|
-2009-12-01                                              2011-09-01                              2011-11-30
-(Compute Recency, Frequency, Monetary, Tenure, etc.)      [CUTOFF]      (Observe Churn=1 if Orders==0)
-                                                                        (Future LTV = Total Spend in Window)
-```
+**RetainIQ** is an end-to-end machine learning project that helps e-commerce businesses identify customers at risk of churning, estimate their future monetary value, and understand the factors influencing their predictions.
 
-- **Cutoff Date:** `2011-09-01 00:00:00`
-- **Churn Label ($Y_{\text{churn}}$):** $1$ if the customer executed **0 purchase invoices** in the 90 days after cutoff; $0$ otherwise.
-- **Future LTV Label ($Y_{\text{ltv}}$):** Total monetary gross spend ($\pounds$) within the 90-day forward window.
-- **Why Time-Based Split:** Random splits leak future buying habits into historical predictors (e.g., predicting past spend using future loyalty). A temporal cutoff strictly replicates real-world production deployment.
+Unlike approaches that rely on historical purchasing totals alone, RetainIQ uses a strict temporal evaluation strategy to predict future customer behavior from information available before a defined cutoff date.
 
----
+The project combines predictive modeling, survival analysis, explainable AI, and an interactive dashboard in one application.
 
-## 4. Modeling Benchmarks & Results
+**[Open the Live Application →](https://retainiq-jul8liic22pxmy8gemp8j8.streamlit.app/)**
 
-### Churn Classification Benchmarks (Test Set $N=1,313$)
+## Key Features
 
-| Model Architecture | ROC-AUC | F1-Score | Recall (Sensitivity) | Precision | Accuracy |
-| :--- | :---: | :---: | :---: | :---: | :---: |
-| **Logistic Regression (Baseline + StandardScaler)** | 0.7796 | 0.7340 | 0.6955 | **0.7771** | 0.7113 |
-| **XGBoost Classifier (scale_pos_weight)** | **0.7854** | **0.7559** | **0.7513** | 0.7604 | **0.7220** |
+| Feature | Description |
+|---|---|
+| Customer Churn Prediction | Estimates churn risk using Logistic Regression and XGBoost classification models. |
+| Customer Lifetime Value | Predicts customer monetary value over a future 90-day observation window. |
+| Survival Analysis | Uses Kaplan–Meier estimates and Cox Proportional Hazards modeling to analyze customer inactivity. |
+| Explainable AI | Uses SHAP to help interpret individual predictions and overall model behavior. |
+| Customer Segmentation | Analyzes RFM-based customer groups, including Champions, Loyal Customers, At Risk, and Hibernating. |
+| Batch Prediction | Upload customer data through CSV, score multiple records, and export predictions. |
+| Interactive Dashboard | Explore customer risk, model performance, prediction results, and analytical insights. |
 
-*Note: For churn prevention, recall is the critical operational metric. XGBoost achieves a **+5.58% higher recall**, detecting 565 out of 752 actual churners.*
+## Dashboard Modules
 
-### Forward 90-Day LTV Regression
+RetainIQ organizes its analysis into four main modules:
 
-- **Model:** XGBoost Regressor (Trained on $\log(1 + y)$ target)
-- **Mean Absolute Error (MAE):** $\pounds 483.41$
-- **Root Mean Squared Error (RMSE):** $\pounds 3,328.74$
-- **$R^2$ Score:** $0.2758$ (Substantial capture over high-variance retail spend)
+- **Overview:** Executive metrics, customer segments, churn patterns, and survival analysis.
+- **Single Prediction:** Interactive customer inputs, estimated churn probability, projected 90-day LTV, and SHAP-based explanations.
+- **Batch Prediction:** CSV upload, bulk scoring, risk analysis, and downloadable results.
+- **Model Insights:** Model comparisons, confusion matrices, ROC curves, and global feature explanations.
+
+## Model Performance
+
+The following are the evaluation results documented for this project.
+
+### Churn Classification
+
+| Metric | Logistic Regression | XGBoost |
+|---|---:|---:|
+| ROC-AUC | 0.7796 | 0.7854 |
+| F1-Score | 0.7340 | 0.7559 |
+| Recall | 0.6955 | 0.7513 |
+| Precision | 0.7771 | 0.7604 |
+| Accuracy | 0.7113 | 0.7220 |
+
+XGBoost achieved a recall of **75.13%**, compared with 69.55% for Logistic Regression, on the documented test set. Recall is particularly relevant to retention because missed churners may represent lost opportunities for intervention.
+
+### Customer Lifetime Value Prediction
+
+| Metric | XGBoost Regressor |
+|---|---:|
+| Mean Absolute Error (MAE) | £483.41 |
+| Root Mean Squared Error (RMSE) | £3,328.74 |
+| R² Score | 0.2758 |
+
+The LTV model uses a log-transformed target to handle the skewed distribution of customer spending. The error values should be considered alongside the substantial variation in retail purchase amounts.
 
 ### Survival Analysis
 
-- **Kaplan-Meier Estimator:** Stratified across 5 RFM segments (*Champions*, *Loyal Customers*, *Potential Loyalists*, *At Risk*, *Hibernating*).
-- **Cox Proportional Hazards Model:** Concordance Index = $0.3226$ on purchase latency with significant hazard ratios for Recency ($\beta = +0.0026$) and Frequency ($\beta = -0.1674$).
+- **Kaplan–Meier Estimation:** Analyzes customer survival patterns across RFM segments.
+- **Cox Proportional Hazards:** Models time to inactivity using customer behavior features.
+- **Concordance Index:** 0.3226 in the documented evaluation.
 
----
+These results are experimental benchmarks, not guarantees of future business performance.
 
-## 5. Application Architecture & User Interface
+## Dataset & Methodology
 
-The web application is designed with an enterprise SaaS aesthetic (Stripe & Mixpanel design language):
-- **Base Palette:** Light `#F6F9FC` canvas, `#FFFFFF` rounded card modules (12px radius, `#E3E8EE` border).
-- **Brand Accent:** `#635BFF` indigo primary buttons and metrics.
-- **Risk Tokens:** Low `#1FA971` (Emerald), Medium `#F5A623` (Amber), High `#E5484D` (Crimson).
+RetainIQ uses the **UCI Online Retail II** transaction dataset covering retail activity from 2009–2011.
 
-### Dashboard Pages:
-1. **Overview:** Executive KPIs, RFM segment churn bars, cohort risk donut chart, and Kaplan-Meier curves.
-2. **Single Prediction:** Real-time customer parameter sliders, churn probability gauge, risk pill, projected 90-day LTV, dynamic retention curve, and top 3 SHAP decision drivers.
-3. **Batch Prediction:** Drag-and-drop CSV file uploader, sample CSV generator, scored risk table, and batch CSV export.
-4. **Model Insights:** LR vs XGBoost comparison table, confusion matrix heatmaps, ROC curves, and global SHAP summary.
+The documented cleaning pipeline reports:
 
-### Screenshots
+| Processing Stage | Records |
+|---|---:|
+| Raw transactions | 1,067,371 |
+| Cleaned transactions | 779,425 |
+| Distinct customers in cleaned data | 5,878 |
 
-| Overview Dashboard | Single Prediction & SHAP |
-| :---: | :---: |
-| ![Overview](reports/figures/10_app_overview.png) | ![Single Prediction](reports/figures/11_app_single_prediction.png) |
+The preprocessing workflow removes records with missing customer identifiers, cancellation transactions, invalid quantities or prices, and duplicate entries.
 
-| Batch Prediction Module | Model Insights & ROC Curves |
-| :---: | :---: |
-| ![Batch Prediction](reports/figures/12_app_batch_prediction.png) | ![Model Insights](reports/figures/13_app_model_insights.png) |
+### Leakage-Free Temporal Evaluation
 
----
+The project uses a temporal cutoff of **September 1, 2011**, with a subsequent 90-day observation window ending November 30, 2011.
 
-## 6. Project Directory Structure
+- **Feature window:** Customer behavior observed before the cutoff.
+- **Churn target:** Whether the customer made zero qualifying purchases during the future observation window.
+- **LTV target:** Customer monetary spending during that future window.
 
-```
-retainIQ/
+This approach is designed to avoid using future purchase information to construct historical predictive features.
+
+Dataset source: [UCI Machine Learning Repository — Online Retail II](https://archive.ics.uci.edu/dataset/502/online+retail+ii)
+
+## Technology Stack
+
+| Technology | Purpose |
+|---|---|
+| Python | Core application and data processing |
+| Pandas & NumPy | Data preparation and numerical analysis |
+| Scikit-learn | Preprocessing, baseline modeling, and evaluation |
+| XGBoost | Churn classification and LTV regression |
+| Lifelines | Survival analysis |
+| SHAP | Model explainability |
+| Streamlit | Interactive web application |
+| Plotly | Interactive data visualizations |
+| Joblib | Model serialization and loading |
+
+## Project Structure
+
+```text
+RetainIQ/
 ├── .streamlit/
-│   └── config.toml             # Custom SaaS light theme tokens
+│   └── config.toml
 ├── app/
-│   ├── app.py                  # Main Streamlit dashboard application
-│   ├── components.py           # Reusable KPI cards, risk badges, and wrappers
-│   └── style.css               # Stripe/Mixpanel-style CSS injection
+│   ├── app.py
+│   ├── components.py
+│   └── style.css
 ├── data/
-│   ├── raw/                    # Downloaded UCI zip & Excel files
-│   └── processed/              # Cleaned parquet & customer feature matrices
+│   ├── raw/
+│   └── processed/
 ├── models/
-│   ├── lr_churn_pipeline.joblib# Logistic Regression baseline pipeline
-│   ├── xgb_churn_model.joblib  # Trained XGBoost churn classifier
-│   ├── xgb_ltv_model.joblib    # XGBoost forward LTV regressor
-│   ├── cox_ph_model.joblib     # Cox Proportional Hazards model
-│   ├── kmf_segments.joblib     # Kaplan-Meier segment fitters
-│   ├── shap_explainer.joblib   # Serialized SHAP TreeExplainer
-│   ├── test_data.joblib        # Stratified holdout test set
-│   └── metrics.json            # Machine-readable performance metrics
 ├── notebooks/
-│   ├── 01_eda.ipynb            # Exploratory data analysis & cleaning
-│   └── 02_modeling.ipynb       # Model benchmarks & viva walkthrough
 ├── reports/
-│   ├── figures/                # 13 high-resolution visualization artifacts
-│   └── report_draft.md         # Full project academic report draft
 ├── src/
-│   ├── data.py                 # Download & cleaning pipeline
-│   ├── features.py             # Leakage-free RFM & label engineering
-│   ├── train.py                # Model training & serialization
-│   ├── evaluate.py             # Evaluation, metric calculations & plots
-│   └── capture_screenshots.py  # Playwright automated UI capture
-├── .gitignore                  # Git ignore rules
-├── README.md                   # Comprehensive project documentation
-└── requirements.txt            # Pinned dependency specifications
+├── .gitignore
+├── README.md
+└── requirements.txt
 ```
 
----
+**Directory overview**
 
-## 7. Setup & Execution Instructions
+- `app/` — Streamlit entry point, reusable UI components, and styling.
+- `data/` — Raw and processed datasets.
+- `models/` — Serialized trained models and explainability artifacts.
+- `notebooks/` — Exploratory analysis and experimentation.
+- `reports/` — Evaluation results and project documentation.
+- `src/` — Reusable data processing and modeling code.
+- `.streamlit/` — Application configuration and theme settings.
+
+## Run Locally
 
 ### Prerequisites
-- Python 3.10+ (Tested on Python 3.13)
+
+- Python 3.10 or later
 - Git
+- The project dependencies listed in `requirements.txt`
 
 ### Installation
+
+**1. Clone the repository**
+
 ```bash
-# 1. Clone repository
-git clone https://github.com/nitesh/retainiq.git
-cd retainiq
+git clone https://github.com/niteshyadav200303/RetainIQ.git
+cd RetainIQ
+```
 
-# 2. Create virtual environment
-python -m venv venv
-# Windows:
-.\venv\Scripts\activate
-# Linux/macOS:
-source venv/bin/activate
+**2. Create a virtual environment**
 
-# 3. Install pinned dependencies
+Windows:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+```
+
+**3. Install dependencies**
+
+```bash
+python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-### Reproduce Pipelines from Scratch
-```bash
-# Step 1: Download & Clean Data
-python src/data.py
+**4. Launch the application**
 
-# Step 2: Feature Engineering (Leakage-free cutoff)
-python src/features.py
-
-# Step 3: Train All Models
-python src/train.py
-
-# Step 4: Evaluate Models & Generate Metrics
-python src/evaluate.py
-```
-
-### Launch Streamlit Dashboard
 ```bash
 streamlit run app/app.py
 ```
-Open [http://localhost:8501](http://localhost:8501) in your browser.
+
+Streamlit will display a local URL in your terminal. Open that URL in your browser.
+
+> **Note:** Local execution requires the model artifacts and any other runtime files referenced by the application to be present at their expected paths. Large files or datasets excluded from Git must be obtained separately.
+
+## Responsible Use & Limitations
+
+- Predictions are estimates and should not be treated as certainties about individual customers.
+- The model benchmarks reflect the dataset, feature definitions, temporal split, and evaluation procedure used in this project.
+- Retail behavior can change over time, so production deployment would require monitoring, validation, and periodic retraining.
+- SHAP explanations describe model behavior; they do not establish causal relationships.
+- Customer data should be handled securely, with appropriate privacy safeguards.
+
+## Future Improvements
+
+- Automated model monitoring and drift detection.
+- Configurable churn thresholds based on retention campaign costs.
+- Customer-level retention recommendations.
+- Time-based backtesting across multiple evaluation periods.
+- A reproducible training pipeline and model versioning.
+- Improved calibration of churn probabilities and survival estimates.
+
+## About
+
+RetainIQ is an individual machine learning project focused on customer analytics, predictive modeling, and explainable AI.
+
+**Author:** Nitesh Yadav
+
+**Repository:** [niteshyadav200303/RetainIQ](https://github.com/niteshyadav200303/RetainIQ)
+
+**Live Demo:** [retainiq.streamlit.app](https://retainiq-jul8liic22pxmy8gemp8j8.streamlit.app/)
 
 ---
 
-## 8. Assumptions & Design Decisions
-
-1. **Non-Contractual Inactivity as Churn:** Churn is defined as zero purchasing activity within 90 days after the cutoff date.
-2. **Customer Identification:** Guest transactions without a valid `CustomerID` were omitted because repeat purchasing patterns cannot be attributed to an entity.
-3. **Cancellations:** Transactions with invoice identifiers starting with `'C'` represent returns/cancellations and were excluded from positive revenue totals.
-4. **Time Split Boundary:** Cutoff was fixed at `2011-09-01`, leaving exactly 100 days until dataset conclusion, allowing a full 90-day forward window with zero temporal leakage.
-5. **Class Imbalance Policy:** With a 57.3% churn rate in the cohort, XGBoost utilizes `scale_pos_weight = 0.745` and Logistic Regression uses `class_weight='balanced'` to optimize detection sensitivity.
-
----
-
-## 9. Future Work
-
-1. **Sequential Deep Learning:** Incorporate Recurrent Neural Networks (LSTM/GRU) or Transformer architectures (e.g., TabPFN) to process raw transaction sequences rather than aggregated RFM features.
-2. **Buy 'Til You Die (BTYD) Hybridization:** Combine XGBoost with parametric BG/NBD and Gamma-Gamma probabilistic models.
-3. **Real-time Automated Interventions:** Connect RetainIQ webhooks to automated email marketing platforms (e.g., Klaviyo/SendGrid) for immediate automated coupon triggers upon risk threshold violations.
-
----
-
-**Author:** Nitesh  
-*Final Year Individual Mini Project (AI & DS II)*
+<p align="center">
+  <strong>RetainIQ</strong><br>
+  Turning customer behavior into actionable intelligence.
+</p>
